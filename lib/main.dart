@@ -252,62 +252,42 @@ class ActionAnimation extends StatefulWidget {
 
 class _ActionAnimationState extends State<ActionAnimation> {
   double _opacityValue = 1.0;
-  
-  void _fadeIn(){
-    setState((){
-      _opacityValue = 1.0;
-    });
+  bool _isHide = false;
+
+  void _onCLickLogo() {
+    debugPrint('_onCLickLogo');
+    if (_isHide) {
+      setState(() {
+        _isHide = true;
+        _opacityValue = 0.0;
+      });
+    } else {
+      setState(() {
+        _isHide = false;
+        _opacityValue = 1.0;
+      });
+    }
   }
 
-  void _fadeOut(){
-    debugPrint('_fadeOut');
-    setState((){
-      _opacityValue = 0.0;
-    });
-  }
-  
   @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         AnimatedOpacity(
-
           opacity: _opacityValue,
           duration: const Duration(seconds: 1),
-          child: const FlutterLogo(size: 150),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Column(
-              children: [
-                Container(
-                  padding: EdgeInsets.only(left: 10.0, right: 10.0),
-                  child: MaterialButton(
-                      color:Colors.blueAccent,
-                      child: const Text('Fade In'),
-                      onPressed: _fadeIn
-                  ),
-                )
-              ],
-            ),
-            Column(
-              children: [
-                Container(
-                  padding: EdgeInsets.only(left: 10.0, right: 10.0),
-                  child: MaterialButton(
-                      color:Colors.blueAccent,
-                      child: const Text('Fade Out'),
-                      onPressed: _fadeOut
-                  ),
-                )
-              ],
-            ),
-          ],
+          child: IconButton(
+            icon: const FlutterLogo(size: 150),
+            onPressed: _onCLickLogo,
+          ),
         ),
       ],
     );
   }
-  
+
 }
+
+
+
+
