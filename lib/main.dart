@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/animation.dart';
 
 void main() {
   runApp(const MyApp());
@@ -105,6 +106,8 @@ class MyApp extends StatelessWidget {
             _title('Logo Action'),
             logoSection,
             Divider(),
+            _title('Action Fade'),
+            ActionAnimation(),
           ],
         )
       )
@@ -194,14 +197,12 @@ class _FavoriteWidgetState extends State<FavoriteWidget>{
 
 class LogoApp extends StatefulWidget {
   const LogoApp({Key? key}) : super(key: key);
-
   @override
   _LogoAppState createState() => _LogoAppState();
-
 }
 
-class _LogoAppState extends State<LogoApp> {
-  var _clickCount = 0;
+class _LogoAppState extends State<LogoApp>{
+  int _clickCount = 0;
 
   void _onTapLogoCountUp(TapUpDetails detail){
     setState((){
@@ -209,7 +210,7 @@ class _LogoAppState extends State<LogoApp> {
     });
   }
 
-  void _onTapLogoCountDown(){
+  void _onTapLogoCountDown() {
     debugPrint('long press');
     setState((){
       _clickCount--;
@@ -224,12 +225,14 @@ class _LogoAppState extends State<LogoApp> {
         GestureDetector(
           onTapUp:_onTapLogoCountUp,
           onLongPress: _onTapLogoCountDown,
-          child: const FlutterLogo(),
+          child: Container(
+            child: FlutterLogo(size: 150),
+          ),
         ),
         Text(
           '$_clickCount',
           style: const TextStyle(
-              fontSize: 15.0,
+              fontSize: 30.0,
               color:Colors.blueAccent
           ),
         ),
@@ -237,4 +240,74 @@ class _LogoAppState extends State<LogoApp> {
     );
   }
 
+}
+
+class ActionAnimation extends StatefulWidget {
+  const ActionAnimation({Key? key}) : super(key: key);
+
+  @override
+  _ActionAnimationState createState() => _ActionAnimationState();
+}
+
+
+class _ActionAnimationState extends State<ActionAnimation> {
+  double _opacityValue = 1.0;
+  
+  void _fadeIn(){
+    setState((){
+      _opacityValue = 1.0;
+    });
+  }
+
+  void _fadeOut(){
+    debugPrint('_fadeOut');
+    setState((){
+      _opacityValue = 0.0;
+    });
+  }
+  
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        AnimatedOpacity(
+
+          opacity: _opacityValue,
+          duration: const Duration(seconds: 1),
+          child: const FlutterLogo(size: 150),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Column(
+              children: [
+                Container(
+                  padding: EdgeInsets.only(left: 10.0, right: 10.0),
+                  child: MaterialButton(
+                      color:Colors.blueAccent,
+                      child: const Text('Fade In'),
+                      onPressed: _fadeIn
+                  ),
+                )
+              ],
+            ),
+            Column(
+              children: [
+                Container(
+                  padding: EdgeInsets.only(left: 10.0, right: 10.0),
+                  child: MaterialButton(
+                      color:Colors.blueAccent,
+                      child: const Text('Fade Out'),
+                      onPressed: _fadeOut
+                  ),
+                )
+              ],
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+  
 }
