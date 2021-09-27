@@ -1,84 +1,123 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const MyApp());
-}
+import 'common_widgets.dart';
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+class Example2 extends StatelessWidget {
+  const Example2({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'demos',
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('layout example 1'),
+    return Column(
+      children: [
+        const TitleWidget(label: "Button Interactive"),
+        Center(
+          child: Column(
+            children: const [IconClickAction(), IconAnimation()],
+          ),
         ),
-        body: const Center(
-          child: ParentWidget(),
-        )
-      )
+      ],
     );
   }
 }
 
-class ParentWidget extends StatefulWidget{
-  const ParentWidget({Key? key}) : super(key: key);
+class IconClickAction extends StatefulWidget {
+  const IconClickAction({Key? key}) : super(key: key);
 
   @override
-  _ParentWidgetState createState() => _ParentWidgetState();
+  _IconClickActionState createState() => _IconClickActionState();
 }
 
-class _ParentWidgetState extends State<ParentWidget> {
-  bool _active = true;
+class _IconClickActionState extends State<IconClickAction> {
+  int _clickCount = 0;
 
-  void _handleTapboxChanged(bool newValue){
+  void _onTapIconCountUp(TapUpDetails details) {
     setState(() {
-      _active = newValue;
+      _clickCount++;
+    });
+  }
+
+  void _onTapIconCountDown() {
+    debugPrint('long press');
+    setState(() {
+      _clickCount--;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: TapBoxB(
-        active: _active,
-        onChanged: _handleTapboxChanged,
-      ),
+    return Column(
+      children: [
+        GestureDetector(
+          onTapUp: _onTapIconCountUp,
+          onLongPress: _onTapIconCountDown,
+          child: const FlutterLogo(size: 150),
+        ),
+        Text(
+          '$_clickCount',
+          style: const TextStyle(fontSize: 30.0, color: Colors.blueAccent),
+        ),
+      ],
     );
   }
-
 }
 
-class TapBoxB extends StatelessWidget {
-  const TapBoxB({Key? key, this.active = false, required this.onChanged }) : super(key: key);
+class IconAnimation extends StatefulWidget {
+  const IconAnimation({Key? key}) : super(key: key);
 
-  final bool active;
-  final ValueChanged<bool> onChanged;
+  @override
+  _IconAnimationState createState() => _IconAnimationState();
+}
 
-  void _handleTap(){
-    onChanged(!active);
+class _IconAnimationState extends State<IconAnimation> {
+  double _opacityValue = 1.0;
+  bool _isHide = false;
+  String _btnStr = "Hide";
+
+  void _onCLickIcon() {
+    if (_isHide) {
+      setState(() {
+        _isHide = false;
+        _btnStr = "Hide";
+        _opacityValue = 1.0;
+      });
+    } else {
+      setState(() {
+        _isHide = true;
+        _btnStr = "Show";
+        _opacityValue = 0.0;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: _handleTap,
-      child: Container(
-        child: Center(
-          child:Text(
-            active ? 'Active' : 'Inactive',
-            style: const TextStyle(fontSize: 32.0, color: Colors.white),
-          ),
+    return Column(
+      children: [
+        AnimatedOpacity(
+          opacity: _opacityValue,
+          duration: const Duration(seconds: 1),
+          child: const FlutterLogo(size: 150),
         ),
-        width: 200.0,
-        height: 200.0,
-        decoration: BoxDecoration(
-          color: active ? Colors.lightGreen[700] : Colors.grey[600],
-        ),
-      ),
+        MaterialButton(
+            color: _isHide ? Colors.blue : Colors.lightGreen,
+            child: Text(_btnStr),
+            onPressed: _onCLickIcon),
+        // TextButton(
+        //   style: ButtonStyle(
+        //     backgroundColor:
+        //     MaterialStateProperty.resolveWith((states) {
+        //       if (states.contains(MaterialState.pressed)){
+        //         //버튼이 눌렸을 때
+        //         return Colors.cyan;
+        //       } else {
+        //         return Colors.blue;
+        //       }
+        //     }),
+        //   ),
+        //     onPressed: _onCLickIcon,
+        //     child: Text(_btnStr, style: const TextStyle(color:Colors.white))
+        // ),
+      ],
     );
   }
-
 }
